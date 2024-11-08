@@ -259,5 +259,10 @@ namespace Alekseev_Autoservice
                 ServiceListView.Items.Refresh();
             }
         }
+
+        private void SignUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new SignUpPage((sender as Button).DataContext as Service));
+        }
     }
 }
