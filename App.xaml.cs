@@ -13,5 +13,6 @@ namespace Alekseev_Autoservice
     /// </summary>
     public partial class App : Application
     {
+
     }
 }

@@ -49,12 +49,22 @@ namespace Alekseev_Autoservice
 
             if (_currentService.Discount == null || _currentService.Discount < 0 || _currentService.Discount > 100)
             {
-                errors.AppendLine("Укажите скидку");
+                errors.AppendLine("Укажите скидку от 0 до 100");
             }
 
-            if (string.IsNullOrWhiteSpace(_currentService.Duration))
+            if (_currentService.Duration == null || _currentService.Duration == 0)
             {
                 errors.AppendLine("Укажите длительность услуги");
+            }
+
+            if (_currentService.Duration > 240)
+            {
+                errors.AppendLine("Длительность услуги не может быть больше 240 минут");
+            }
+
+            if (_currentService.Duration < 0)
+            {
+                errors.AppendLine("Длительность услуги не может быть менее 0 минут");
             }
 
             if (errors.Length > 0)

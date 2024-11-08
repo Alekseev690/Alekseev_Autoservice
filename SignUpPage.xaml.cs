@@ -81,5 +81,42 @@ namespace Alekseev_Autoservice
                 MessageBox.Show(ex.Message.ToString());
             }
         }
+
+        private void TBStart_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string s = TBStart.Text;
+
+            if (s.Length < 5 || !s.Contains(':'))
+                TBEnd.Text = "";
+            else
+            {
+
+                string startTimeInput = TBStart.Text;
+
+                DateTime startTime;
+
+
+                if (DateTime.TryParse(startTimeInput, out startTime))
+                {
+                    string[] start = s.Split(new char[] { ':' });
+                    int startHour = Convert.ToInt32(start[0].ToString()) * 60;
+                    int startMin = Convert.ToInt32(start[1].ToString());
+
+                    int sum = startHour + startMin + _currentService.Duration;
+
+                    int endHour = (sum / 60) % 24;
+                    int endMin = sum % 60;
+                    s = endHour.ToString() + ":" + endMin.ToString();
+                    TBEnd.Text = s;
+
+                }
+                else
+                {
+                    MessageBox.Show("Некорректное время");
+                }
+
+
+            }
+        }
     }
 }
