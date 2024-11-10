@@ -57,20 +57,40 @@ namespace Alekseev_Autoservice
                 errors.AppendLine("Укажите длительность услуги");
             }
 
-            if (_currentService.Duration > 240)
+            if (_currentService.Duration > 240 || _currentService.Duration < 0)
             {
-                errors.AppendLine("Длительность услуги не может быть больше 240 минут");
-            }
-
-            if (_currentService.Duration < 0)
-            {
-                errors.AppendLine("Длительность услуги не может быть менее 0 минут");
+                errors.AppendLine("Длительность услуги не может быть больше 240 минут или меньше 0");
             }
 
             if (errors.Length > 0)
             {
                 MessageBox.Show(errors.ToString());
                 return;
+            }
+
+            var allServices = AlekseevAutoserviceEntities.GetContext().Service.ToList();
+            allServices = allServices.Where(p => p.Title == _currentService.Title).ToList();
+
+            if (allServices.Count == 0)
+            {
+                if (_currentService.ID == 0)
+                {
+                    AlekseevAutoserviceEntities.GetContext().Service.Add(_currentService);
+                }
+                try
+                {
+                    AlekseevAutoserviceEntities.GetContext().SaveChanges();
+                    MessageBox.Show("Информация сохранена");
+                    Manager.MainFrame.GoBack();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message.ToString());
+                }
+            }
+            else
+            {
+                MessageBox.Show("Уже существует такая услуга");
             }
 
             if (_currentService.ID == 0)
