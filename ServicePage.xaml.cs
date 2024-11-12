@@ -116,7 +116,7 @@ namespace Alekseev_Autoservice
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new AddEditPage(null));
+            Manager.MainFrame.Navigate(new AddEditPage((sender as Button).DataContext as Service));
         }
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

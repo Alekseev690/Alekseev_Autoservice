@@ -21,6 +21,7 @@ namespace Alekseev_Autoservice
     public partial class SignUpPage : Page
     {
         private Service _currentService = new Service();
+
         public SignUpPage(Service SelectedService)
         {
             InitializeComponent();
@@ -30,29 +31,29 @@ namespace Alekseev_Autoservice
             DataContext = _currentService;
 
             var _currentClient = AlekseevAutoserviceEntities.GetContext().Client.ToList();
-
             ComboClient.ItemsSource = _currentClient;
         }
 
         private ClientService _currentClientService = new ClientService();
-
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             StringBuilder errors = new StringBuilder();
 
             if (ComboClient.SelectedItem == null)
-            {
                 errors.AppendLine("Укажите ФИО клиента");
-            }
 
             if (StartDate.Text == "")
-            {
                 errors.AppendLine("Укажите дату услуги");
-            }
 
             if (TBStart.Text == "")
-            {
                 errors.AppendLine("Укажите время начала услуги");
+
+            string startTimeInput = TBStart.Text;
+            DateTime startTime;
+
+            if (!DateTime.TryParse(startTimeInput, out startTime))
+            {
+                errors.AppendLine("Некорректное время");
             }
 
             if (errors.Length > 0)
@@ -65,21 +66,21 @@ namespace Alekseev_Autoservice
             _currentClientService.ServiceID = _currentService.ID;
             _currentClientService.StartTime = Convert.ToDateTime(StartDate.Text + " " + TBStart.Text);
 
+
             if (_currentClientService.ID == 0)
-            {
                 AlekseevAutoserviceEntities.GetContext().ClientService.Add(_currentClientService);
-            }
 
             try
             {
                 AlekseevAutoserviceEntities.GetContext().SaveChanges();
-                MessageBox.Show("информация сохранена");
+                MessageBox.Show("Информация сохранена");
                 Manager.MainFrame.GoBack();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message.ToString());
             }
+
         }
 
         private void TBStart_TextChanged(object sender, TextChangedEventArgs e)
@@ -114,8 +115,6 @@ namespace Alekseev_Autoservice
                 {
                     MessageBox.Show("Некорректное время");
                 }
-
-
             }
         }
     }
