@@ -37,23 +37,46 @@ namespace Alekseev_Autoservice
         private ClientService _currentClientService = new ClientService();
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            string s = TBStart.Text;
             StringBuilder errors = new StringBuilder();
 
             if (ComboClient.SelectedItem == null)
                 errors.AppendLine("Укажите ФИО клиента");
-
             if (StartDate.Text == "")
                 errors.AppendLine("Укажите дату услуги");
-
             if (TBStart.Text == "")
                 errors.AppendLine("Укажите время начала услуги");
 
-            string startTimeInput = TBStart.Text;
-            DateTime startTime;
-
-            if (!DateTime.TryParse(startTimeInput, out startTime))
+            // Проверка на правильный формат времени
+            if (s.Length < 4 || s.Length > 5 || !s.Contains(':'))
             {
-                errors.AppendLine("Некорректное время");
+                errors.AppendLine("Указан неверный формат записи (должно быть HH:MM)");
+            }
+            else
+            {
+                string[] start = s.Split(new char[] { ':' });
+
+                // Проверка на количество частей после разделения
+                if (start.Length != 2)
+                {
+                    errors.AppendLine("Указан неверный формат записи (должно быть HH:MM)");
+                }
+                else
+                {
+                    // Попытка преобразования строк в числа
+                    if (!int.TryParse(start[0], out int StartHour) || !int.TryParse(start[1], out int startMin))
+                    {
+                        errors.AppendLine("Часы и минуты должны быть целыми числами");
+                    }
+                    else
+                    {
+                        // Проверка корректности значений часов и минут
+                        if (StartHour < 0 || StartHour >= 24 || startMin < 0 || startMin >= 60)
+                        {
+                            errors.AppendLine("Время указано неверно");
+                        }
+                    }
+                }
             }
 
             if (errors.Length > 0)
@@ -65,7 +88,6 @@ namespace Alekseev_Autoservice
             _currentClientService.ClientID = ComboClient.SelectedIndex + 1;
             _currentClientService.ServiceID = _currentService.ID;
             _currentClientService.StartTime = Convert.ToDateTime(StartDate.Text + " " + TBStart.Text);
-
 
             if (_currentClientService.ID == 0)
                 AlekseevAutoserviceEntities.GetContext().ClientService.Add(_currentClientService);
@@ -80,7 +102,6 @@ namespace Alekseev_Autoservice
             {
                 MessageBox.Show(ex.Message.ToString());
             }
-
         }
 
         private void TBStart_TextChanged(object sender, TextChangedEventArgs e)
